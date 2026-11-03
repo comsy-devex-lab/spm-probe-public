@@ -11,6 +11,7 @@ RUBY="$(command -v ruby)"
 ROOT="$(mktemp -d "$(cd "$(dirname "$0")" && pwd)/pods-consumer.XXXXXX")"
 mkdir -p "$ROOT/home" "$ROOT/tmp" "$ROOT/pods-home" "$ROOT/pods-cache" "$ROOT/spec-repos"
 touch "$ROOT/home/.netrc"
+chmod 600 "$ROOT/home/.netrc"
 env -i PATH="$(dirname "$POD"):$(dirname "$RUBY"):/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin" \
   HOME="$ROOT/home" CFFIXED_USER_HOME="$ROOT/home" TMPDIR="$ROOT/tmp/" \
   LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 \
