@@ -13,6 +13,7 @@ mkdir -p "$ROOT/home" "$ROOT/tmp" "$ROOT/pods-home" "$ROOT/pods-cache" "$ROOT/sp
 touch "$ROOT/home/.netrc"
 env -i PATH="$(dirname "$POD"):$(dirname "$RUBY"):/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin" \
   HOME="$ROOT/home" CFFIXED_USER_HOME="$ROOT/home" TMPDIR="$ROOT/tmp/" \
+  LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 \
   DEVELOPER_DIR="$DEVELOPER_DIR" POD="$POD" \
   CP_HOME_DIR="$ROOT/pods-home" CP_CACHE_DIR="$ROOT/pods-cache" CP_REPOS_DIR="$ROOT/spec-repos" \
   COCOAPODS_DISABLE_STATS=true COCOAPODS_SKIP_UPDATE_MESSAGE=true \
