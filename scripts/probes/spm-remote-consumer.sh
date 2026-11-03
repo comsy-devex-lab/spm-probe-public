@@ -12,7 +12,7 @@ touch "$ROOT/home/.netrc"
 # No inherited tokens, proxy credentials, cookies, Git settings or package caches.
 # Empty helper/extraHeader values reset any inherited Git multi-value configuration.
 env -i PATH=/usr/bin:/bin:/usr/sbin:/sbin \
-  HOME="$ROOT/home" CFFIXED_USER_HOME="$ROOT/home" TMPDIR="$ROOT/tmp/" \
+  HOME="$ROOT/home" TMPDIR="$ROOT/tmp/" \
   DEVELOPER_DIR="$DEVELOPER_DIR" \
   GIT_CONFIG_NOSYSTEM=1 GIT_CONFIG_GLOBAL=/dev/null GIT_TERMINAL_PROMPT=0 \
   GIT_ASKPASS=/usr/bin/false SSH_ASKPASS=/usr/bin/false \
@@ -44,9 +44,22 @@ precondition(probe_value() == 42)
 print("remote probe_value=42")
 EOF
 # SwiftPM explicitly disables both credential stores; fresh paths avoid local reuse.
-(cd "$ROOT/MacConsumer" && swift run --disable-keychain --disable-netrc \
+printf '\nSTEP: resolve/download/build remote macOS consumer\n'
+(cd "$ROOT/MacConsumer" && swift build --product ProbeConsumer \
+  --disable-keychain --disable-netrc \
   --cache-path "$ROOT/mac-cache" --config-path "$ROOT/mac-config" \
-  --security-path "$ROOT/mac-security" ProbeConsumer)
+  --security-path "$ROOT/mac-security")
+printf '\nSTEP: execute the built macOS consumer (same precondition)\n'
+BINARY="$ROOT/MacConsumer/.build/debug/ProbeConsumer"
+if "$BINARY"; then
+  printf 'macOS consumer execution completed\n'
+else
+  status=$?
+  printf 'macOS execution failed: exit=%s; build/download had completed\n' "$status" >&2
+  /usr/bin/file "$BINARY"
+  /usr/bin/codesign --verify --verbose=2 "$BINARY" || true
+  exit "$status"
+fi
 cat > "$ROOT/IOSConsumer/App.swift" <<'EOF'
 import UIKit
 import ProbeBinary
